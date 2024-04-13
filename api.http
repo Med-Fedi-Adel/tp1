@@ -1,0 +1,44 @@
+
+### TEST 
+GET http://localhost:3000/
+
+
+### GET CV
+GET http://localhost:3000/cvs?critere=chaima&age=20
+
+### UPDATE CV BY ID 
+PUT http://localhost:3000/cvs/1
+auth-user : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1c2VySWQiOjF9.UjgDHYQpEdM6Oyka05NZHUi9kqlzHTb7VhagLNaGL5o
+
+### POST USER 
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "username": "fedi",
+    "email": "fedi@gmail.com" ,
+    "password": "123456"
+}
+
+### POST SKILL 
+POST http://localhost:3000/skills
+Content-Type: application/json
+
+{
+    "designation" : "lkedhb"
+}
+
+
+### POST CV
+POST http://localhost:3000/cvs
+Content-Type: application/json
+
+{
+    "name" : "fedi",
+    "firstname" : "fedi",
+    "age" : 21,
+    "cin": 123456,
+    "job" : "dev",
+    "path" : "C:/Users/fedi/Desktop"
+
+}
