@@ -29,7 +29,7 @@ async function bootstrap() {
     const password = randPassword();
     const user = new CreateUserDto(username, email, password);
 
-    await userService.add(user);
+    await userService.create(user);
 
     const skill = {
       designation: randSkill(),

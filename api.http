@@ -4,7 +4,7 @@ GET http://localhost:3000/
 
 
 ### GET CV
-GET http://localhost:3000/cvs?critere=chaima&age=20
+GET http://localhost:3000/cvs?critere=mohamed&age=21
 
 ### UPDATE CV BY ID 
 PUT http://localhost:3000/cvs/1
@@ -41,4 +41,23 @@ Content-Type: application/json
     "job" : "dev",
     "path" : "C:/Users/fedi/Desktop"
 
+}
+
+### LOGIN USER
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{   
+    "email" : "mohamed@gmail.com" , 
+    "password" : "123456"
+}
+
+### SIGN UP USER
+POST http://localhost:3000/auth/signup
+Content-Type: application/json
+
+{   
+    "username" : "Mohamed" , 
+    "email" : "mohamed@gmail.com",
+    "password" : "123456"
 }

@@ -9,6 +9,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { Cv } from './entities/cv.entity';
 import { ExDTO } from './dto/ex.dto';
+import {
+  IPaginationOptions,
+  Pagination,
+  paginate,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class CvsService {
@@ -23,8 +28,11 @@ export class CvsService {
   async findall(): Promise<Cv[]> {
     return await this.cvRepo.find();
   }
-  async getAll(dto: ExDTO): Promise<Cv[]> {
-    return await this.cvRepo
+  async getAll(
+    dto: ExDTO,
+    options: IPaginationOptions,
+  ): Promise<Pagination<Cv>> {
+    const queryBuilder = this.cvRepo
       .createQueryBuilder('cv')
       .where(
         'cv.age = :age OR cv.name LIKE :critere OR cv.firstname LIKE :critere OR cv.job LIKE :critere',
@@ -32,8 +40,8 @@ export class CvsService {
           age: dto.age,
           critere: `%${dto.critere}%`,
         },
-      )
-      .getMany();
+      );
+    return paginate<Cv>(queryBuilder, options);
   }
   async addCv(cv: CreateCvDto): Promise<Cv> {
     return await this.cvRepo.save(cv);

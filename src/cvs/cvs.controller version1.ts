@@ -21,7 +21,7 @@ export class CvsController {
   //async addCvAvecDonnéesFictives() {
   //return await this.service.GenererDonnéesFictives();
   //}
-  @Get()
+  /* @Get()
   async getALLCvs(
     @Query('critere')
     critere: string,
@@ -43,9 +43,9 @@ export class CvsController {
   /* @Patch(':id')
   async updateCv(@Param('id', ParseIntPipe) id, @Body() updatecv: UpdateCvDto) {
     return await this.service.updateCv(id, updatecv);
-  }*/
+  }
   @Delete(':id')
   async Delete(@Param('id', ParseIntPipe) id) {
     return await this.service.delete(id);
-  }
+  }*/
 }

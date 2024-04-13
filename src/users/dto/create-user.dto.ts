@@ -7,9 +7,12 @@ export class CreateUserDto {
   email: string;
   @IsString()
   password: string;
-  constructor(u: string, e: string, p: string) {
+  @IsString()
+  role: string;
+  constructor(u: string, e: string, p: string, r: string = 'user') {
     this.username = u;
     this.email = e;
     this.password = p;
+    this.role = r;
   }
 }
