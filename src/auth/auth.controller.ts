@@ -32,7 +32,6 @@ export class AuthController {
   }
 
   @Get('me')
-  @AuthGuard(JwtAuthGuard)
   getMe() {
     return 'Hello';
   }

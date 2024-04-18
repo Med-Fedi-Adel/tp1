@@ -13,6 +13,7 @@ import {
   UnauthorizedException,
   DefaultValuePipe,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { CvsService } from './cvs.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -23,47 +24,54 @@ import { verify } from 'jsonwebtoken';
 import { Cv } from './entities/cv.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { JwtAuthGuard } from 'src/auth/jwt-guard';
+import { GetUser } from 'src/auth/getUser.decorator';
+import { PayloadType } from 'src/auth/types';
 
 @Controller('cvs')
 export class CvsController {
   constructor(private service: CvsService) {}
-  //@Get()
-  //async addCvAvecDonnéesFictives() {
-  //return await this.service.GenererDonnéesFictives();
-  //}
   // @Get()
-  // async getALLCvs(
-  //   @Query('critere')
-  //   critere: string,
-  //   @Query('age', ParseIntPipe)
-  //   age: number,
-  //   @Query('page', new DefaultValuePipe(1), ParseIntPipe)
-  //   page: number = 1,
-  //   @Query('limit', new DefaultValuePipe(10), ParseIntPipe)
-  //   limit: number = 10,
-  // ): Promise<Pagination<Cv>> {
-  //   limit = limit > 100 ? 100 : limit;
-  //   const dto = new ExDTO(critere, age);
-  //   return await this.service.getAll(dto, { limit, page });
+  // async addCvAvecDonnéesFictives() {
+  // return await this.service.GenererDonnéesFictives();
   // }
-  // @Post()
-  // async addCv(@Body() addcv: CreateCvDto) {
-  //   return await this.service.addCv(addcv);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getALLCvs(
+    @Query('critere')
+    critere: string,
+    @Query('age', ParseIntPipe)
+    age: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe)
+    page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe)
+    limit: number = 10,
+    @GetUser() user: PayloadType,
+  ): Promise<Pagination<Cv>> {
+    limit = limit > 100 ? 100 : limit;
+    const dto = new ExDTO(critere, age);
+    return await this.service.getAll(dto, { limit, page }, user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async addCv(@Body() addcv: CreateCvDto, @GetUser() user: PayloadType) {
+    console.log('user', user);
+    return await this.service.addCv(addcv, user.userId);
+  }
   @Get('byid/:id')
   async cvById(@Param('id', ParseIntPipe) id) {
     return await this.service.findCvById(id);
   }
   // eslint-disable-next-line prettier/prettier
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   async updateCv(
-    @Headers('auth-user') token: string,
     @Param('id', ParseIntPipe) id,
     @Body() updatecv: UpdateCvDto,
+    @GetUser() user: PayloadType,
   ) {
     try {
-      const payLoad = verify(token, 'secret');
-      return await this.service.updateCv(id, updatecv, payLoad['userId']);
+      return await this.service.updateCv(id, updatecv, user.userId);
     } catch (err) {
       console.error(err);
       throw new UnauthorizedException('You cannot access this route');

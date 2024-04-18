@@ -14,12 +14,16 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
+import { User } from 'src/users/entities/user.entity';
+import { PayloadType } from 'src/auth/types';
 
 @Injectable()
 export class CvsService {
   constructor(
     @InjectRepository(Cv)
     private cvRepo: Repository<Cv>,
+    @InjectRepository(User)
+    private userRepo: Repository<User>,
   ) {}
 
   async add(cv: CreateCvDto) {
@@ -31,20 +35,44 @@ export class CvsService {
   async getAll(
     dto: ExDTO,
     options: IPaginationOptions,
+    user: PayloadType,
   ): Promise<Pagination<Cv>> {
-    const queryBuilder = this.cvRepo
-      .createQueryBuilder('cv')
-      .where(
+    console.log('user', user);
+    const queryBuilder = this.cvRepo.createQueryBuilder('cv');
+    if (user.role === 'admin') {
+      queryBuilder.where(
         'cv.age = :age OR cv.name LIKE :critere OR cv.firstname LIKE :critere OR cv.job LIKE :critere',
         {
           age: dto.age,
           critere: `%${dto.critere}%`,
         },
       );
+    } else {
+      queryBuilder.where(
+        '(cv.age = :age OR cv.name LIKE :critere OR cv.firstname LIKE :critere OR cv.job LIKE :critere) AND cv.user.id = :userId',
+        {
+          age: dto.age,
+          critere: `%${dto.critere}%`,
+          userId: user.userId,
+        },
+      );
+    }
     return paginate<Cv>(queryBuilder, options);
   }
-  async addCv(cv: CreateCvDto): Promise<Cv> {
-    return await this.cvRepo.save(cv);
+  async addCv(cv: CreateCvDto, userId: number): Promise<Cv> {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+      select: ['id', 'username', 'email', 'role'],
+    });
+    const cv1 = new Cv();
+    cv1.name = cv.name;
+    cv1.firstname = cv.firstname;
+    cv1.age = cv.age;
+    cv1.cin = cv.cin;
+    cv1.job = cv.job;
+    cv1.path = cv.path;
+    cv1.user = user;
+    return await this.cvRepo.save(cv1);
   }
   async findCvById(id: number): Promise<Cv> {
     const cv = await this.cvRepo.findOneById(id);
@@ -64,6 +92,7 @@ export class CvsService {
     if (!newCv) {
       throw new NotFoundException(`Le Cv d'id ${id} n'existe pas`);
     }
+    console.log(newCv, userId);
     if (newCv.user.id !== userId) {
       throw new UnauthorizedException(
         "Vous n'êtes pas autorisé à modifier ce Cv",

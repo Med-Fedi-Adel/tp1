@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import { PayloadType } from './types';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class AdminGuard extends AuthGuard('jwt') {
   constructor(@Inject('REQUEST') private readonly request: Request) {
     super();
   }
@@ -24,7 +24,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw err || new UnauthorizedException();
     }
 
-    this.request['user'] = user;
+    if (user.role !== 'admin') {
+      throw new UnauthorizedException();
+    }
     return user;
   }
 }
