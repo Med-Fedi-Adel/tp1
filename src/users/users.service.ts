@@ -1,10 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { LoginDTO } from 'src/auth/dto/loginDTO';
+import { LoginDTO } from '../auth/dto/loginDTO';
 
 import * as bcrypt from 'bcryptjs';
 
