@@ -58,7 +58,8 @@ export class CvsController {
     console.log('user', user);
     return await this.service.addCv(addcv, user.userId);
   }
-  @Get('byid/:id')
+
+  @Get(':id')
   async cvById(@Param('id', ParseIntPipe) id) {
     return await this.service.findCvById(id);
   }

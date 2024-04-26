@@ -24,6 +24,7 @@ import { PayloadType } from 'src/auth/types';
 
 @Injectable()
 export class CvsService {
+  //constructor
   constructor(
     @InjectRepository(Cv)
     private cvRepo: Repository<Cv>,
@@ -34,9 +35,11 @@ export class CvsService {
   async add(cv: CreateCvDto) {
     return await this.cvRepo.save(cv);
   }
+
   async findall(): Promise<Cv[]> {
     return await this.cvRepo.find();
   }
+
   async getAll(
     dto: ExDTO,
     options: IPaginationOptions,
@@ -64,6 +67,7 @@ export class CvsService {
     }
     return paginate<Cv>(queryBuilder, options);
   }
+
   async addCv(cv: CreateCvDto, userId: number): Promise<Cv> {
     const user = await this.userRepo.findOne({
       where: { id: userId },
@@ -79,6 +83,7 @@ export class CvsService {
     cv1.user = user;
     return await this.cvRepo.save(cv1);
   }
+
   async findCvById(id: number): Promise<Cv> {
     const cv = await this.cvRepo.findOneById(id);
     if (!cv) {
@@ -86,6 +91,7 @@ export class CvsService {
     }
     return cv;
   }
+
   async updateCv(
     id: number,
     cv: UpdateCvDto,
@@ -106,11 +112,14 @@ export class CvsService {
     // on sauvgarde la nouvelle entité donc le nouveau cv
     return await this.cvRepo.update(id, cv);
   }
+
   async delete(id: number) {
     return this.cvRepo.delete(id);
   }
-  
-  async uploadFile(file: Express.Multer.File): Promise<{ filename: string; path: string }> {
+
+  async uploadFile(
+    file: Express.Multer.File,
+  ): Promise<{ filename: string; path: string }> {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
@@ -125,7 +134,9 @@ export class CvsService {
 
     const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png'];
     if (!allowedMimes.includes(file.mimetype)) {
-      throw new BadRequestException('Invalid file type. Only JPEG, JPG, and PNG image files are allowed.');
+      throw new BadRequestException(
+        'Invalid file type. Only JPEG, JPG, and PNG image files are allowed.',
+      );
     }
 
     const uploadDirectory = join(__dirname, '..', '..', 'public', 'uploads');

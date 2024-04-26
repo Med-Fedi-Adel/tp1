@@ -3,14 +3,34 @@
 GET http://localhost:3000/
 
 
-### GET CV
+####################################################################################
 
+### GET CV
 GET http://localhost:3000/cvs?age=21&critere=beney
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vaGFtZWRAZ21haWwuY29tIiwidXNlcklkIjo0LCJ1c2VybmFtZSI6ImNoYWltYWdoYXJiaSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzEzMDA5MTk0LCJleHAiOjE3MTMwOTU1OTR9.kfbELeqyJwTouMjJ__EACjit2Zxwx38qkmUa2vuha1Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlZGlAZ21haWwuY29tIiwidXNlcklkIjo0LCJ1c2VybmFtZSI6ImZlZGkiLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNDE2NjgzNywiZXhwIjoxNzE0MjUzMjM3fQ.2ZzMW2Fb7Jq1v03wfU-Y0lgdJHPkMpCvVn9nPh9LILQ
+
+
 
 ### UPDATE CV BY ID 
 PUT http://localhost:3000/cvs/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vaGFtZWRAZ21haWwuY29tIiwidXNlcklkIjo0LCJ1c2VybmFtZSI6ImNoYWltYWdoYXJiaSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzEzMDA5MTk0LCJleHAiOjE3MTMwOTU1OTR9.kfbELeqyJwTouMjJ__EACjit2Zxwx38qkmUa2vuha1Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlZGlAZ21haWwuY29tIiwidXNlcklkIjo0LCJ1c2VybmFtZSI6ImZlZGkiLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNDE2NjgzNywiZXhwIjoxNzE0MjUzMjM3fQ.2ZzMW2Fb7Jq1v03wfU-Y0lgdJHPkMpCvVn9nPh9LILQ
+Content-Type: application/json
+
+{
+    "job" : "constructeur"
+}
+
+### GET CV BY ID
+GET http://localhost:3000/cvs/1
+
+
+### DELETE CV BY ID
+DELETE http://localhost:3000/cvs/1
+
+
+
+#################################################################
+
 
 ### POST USER 
 POST http://localhost:3000/users
@@ -19,39 +39,47 @@ Content-Type: application/json
 {
     "username": "fedi",
     "email": "fedi@gmail.com" ,
-    "password": "123456"
+    "password": "123456",
+    "role": "user"
 }
 
+
+
+#########################################################################
 ### POST SKILL 
 POST http://localhost:3000/skills
 Content-Type: application/json
 
 {
-    "designation" : "lkedhb"
+    "designation" : "peinture"
 }
 
+
+###########################################################################
 
 ### POST CV
 POST http://localhost:3000/cvs
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwidXNlcklkIjo3LCJ1c2VybmFtZSI6ImN2Y3YiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTMwMzExOTgsImV4cCI6MTcxMzExNzU5OH0.oFgZLru514FXMbrYMI118oOTy-_2dGbCLya8-Vi1JYA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlZGlAZ21haWwuY29tIiwidXNlcklkIjo0LCJ1c2VybmFtZSI6ImZlZGkiLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNDE2NjgzNywiZXhwIjoxNzE0MjUzMjM3fQ.2ZzMW2Fb7Jq1v03wfU-Y0lgdJHPkMpCvVn9nPh9LILQ
 Content-Type: application/json
 
 {
-    "name" : "hamrouni",
-    "firstname" : "lamia",
-    "age" : 56,
+    "name" : "adel",
+    "firstname" : "fedi",
+    "age" : 21,
     "cin": 123456,
-    "job" : "tbiba",
-    "path" : "C:/Users/lamia/Desktop"
+    "job" : "testeur",
+    "path" : "path test"
 
 }
+
+### AUTH #######################################################################""
 
 ### LOGIN USER
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {   
-    "email" : "test@gmail.com" , 
+    "email" : "fedi@gmail.com" , 
     "password" : "123456"
 }
 
@@ -60,7 +88,7 @@ POST http://localhost:3000/auth/signup
 Content-Type: application/json
 
 {   
-    "username" : "cvcv" , 
-    "email" : "test@gmail.com",
-    "password" : "123456"
+     "username": "fedi",
+    "email": "fedi@gmail.com" ,
+    "password": "123456"
 }

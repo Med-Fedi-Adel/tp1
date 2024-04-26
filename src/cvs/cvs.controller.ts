@@ -60,6 +60,7 @@ export class CvsController {
   async cvById(@Param('id', ParseIntPipe) id) {
     return await this.service.findCvById(id);
   }
+
   // eslint-disable-next-line prettier/prettier
   @Put(':id')
   async updateCv(
@@ -75,11 +76,13 @@ export class CvsController {
       throw new UnauthorizedException('You cannot access this route');
     }
   }
+
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async Delete(@Param('id', ParseIntPipe) id) {
     return await this.service.delete(id);
   }
+
   @Post('upload')
   @UseInterceptors(FileInterceptor('image'))
   async uploadFile(@UploadedFile() file) {

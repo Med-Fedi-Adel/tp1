@@ -9,5 +9,6 @@ import { User } from 'src/users/entities/user.entity';
   imports: [TypeOrmModule.forFeature([Cv, User])],
   controllers: [CvsController],
   providers: [CvsService],
+  exports: [CvsService],
 })
 export class CvsModule {}
