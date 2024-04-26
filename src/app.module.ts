@@ -8,15 +8,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { Cv } from './cvs/entities/cv.entity';
 import { Skill } from './skills/entities/skill.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5432,
+      port: 5433,
       username: 'postgres',
-      password: '1988',
+      password: '474853332',
       database: 'tp1',
       entities: ['dist/**/*.entity.ts', User, Cv, Skill],
       synchronize: true,
@@ -24,6 +25,7 @@ import { Skill } from './skills/entities/skill.entity';
     CvsModule,
     SkillsModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

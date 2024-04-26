@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 
@@ -13,23 +12,25 @@ import {
   randSkill,
   randUserName,
 } from '@ngneat/falso';
-import { UsersService } from 'src/users/users.service';
-import { CvsService } from 'src/cvs/cvs.service';
-import { SkillsService } from 'src/skills/skills.service';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UsersService } from '../users/users.service';
+import { CvsService } from '../cvs/cvs.service';
+import { SkillsService } from '../skills/skills.service';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+
+const NUMBER_OF_USERS = 9;
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const userService: UsersService = app.get(UsersService);
   const cvService: CvsService = app.get(CvsService);
   const skillService: SkillsService = app.get(SkillsService);
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < NUMBER_OF_USERS; i++) {
     const email = randEmail();
     const username = randUserName();
     const password = randPassword();
     const user = new CreateUserDto(username, email, password);
 
-    await userService.add(user);
+    await userService.create(user);
 
     const skill = {
       designation: randSkill(),
@@ -52,7 +53,7 @@ async function bootstrap() {
   }
   const cvs = await cvService.findall();
   for (const cv of cvs) {
-    const index = Math.floor(Math.random() * (21 - 12 + 1)) + 12;
+    const index = Math.floor(Math.random() * NUMBER_OF_USERS) + 1;
     console.log('index =', index);
     const skill = await skillService.getSkillById(index);
     console.log('skill', skill);

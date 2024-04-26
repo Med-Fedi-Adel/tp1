@@ -12,6 +12,8 @@ import {
   Headers,
   UnauthorizedException,
   BadRequestException,
+  DefaultValuePipe,
+  UseGuards,
 } from '@nestjs/common';
 import { CvsService } from './cvs.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -19,6 +21,9 @@ import { UpdateCvDto } from './dto/update-cv.dto';
 import { ExDTO } from './dto/ex.dto';
 
 import { verify } from 'jsonwebtoken';
+import { Cv } from './entities/cv.entity';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { JwtAuthGuard } from 'src/auth/jwt-guard';
 
 import { UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -32,20 +37,25 @@ export class CvsController {
   //async addCvAvecDonnéesFictives() {
   //return await this.service.GenererDonnéesFictives();
   //}
-  @Get()
-  async getALLCvs(
-    @Query('critere')
-    critere: string,
-    @Query('age', ParseIntPipe)
-    age: number,
-  ) {
-    const dto = new ExDTO(critere, age);
-    return await this.service.getAll(dto);
-  }
-  @Post()
-  async addCv(@Body() addcv: CreateCvDto) {
-    return await this.service.addCv(addcv);
-  }
+  // @Get()
+  // async getALLCvs(
+  //   @Query('critere')
+  //   critere: string,
+  //   @Query('age', ParseIntPipe)
+  //   age: number,
+  //   @Query('page', new DefaultValuePipe(1), ParseIntPipe)
+  //   page: number = 1,
+  //   @Query('limit', new DefaultValuePipe(10), ParseIntPipe)
+  //   limit: number = 10,
+  // ): Promise<Pagination<Cv>> {
+  //   limit = limit > 100 ? 100 : limit;
+  //   const dto = new ExDTO(critere, age);
+  //   return await this.service.getAll(dto, { limit, page });
+  // }
+  // @Post()
+  // async addCv(@Body() addcv: CreateCvDto) {
+  //   return await this.service.addCv(addcv);
+  // }
   @Get('byid/:id')
   async cvById(@Param('id', ParseIntPipe) id) {
     return await this.service.findCvById(id);
@@ -65,6 +75,7 @@ export class CvsController {
       throw new UnauthorizedException('You cannot access this route');
     }
   }
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async Delete(@Param('id', ParseIntPipe) id) {
     return await this.service.delete(id);

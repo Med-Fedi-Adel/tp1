@@ -1,5 +1,5 @@
 import { TimeEntities } from '../../Generics/time.entities';
-import { Cv } from 'src/cvs/entities/cv.entity';
+import { Cv } from '../../cvs/entities/cv.entity';
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('skill')
