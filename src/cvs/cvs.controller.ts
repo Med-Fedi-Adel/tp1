@@ -23,7 +23,7 @@ import { ExDTO } from './dto/ex.dto';
 import { verify } from 'jsonwebtoken';
 import { Cv } from './entities/cv.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { JwtAuthGuard } from 'src/auth/jwt-guard';
+import { JwtAuthGuard } from '../auth/jwt-guard';
 
 import { UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';

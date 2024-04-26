@@ -23,9 +23,9 @@ import { ExDTO } from './dto/ex.dto';
 import { verify } from 'jsonwebtoken';
 import { Cv } from './entities/cv.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { JwtAuthGuard } from 'src/auth/jwt-guard';
-import { GetUser } from 'src/auth/getUser.decorator';
-import { PayloadType } from 'src/auth/types';
+import { JwtAuthGuard } from '../auth/jwt-guard';
+import { GetUser } from '../auth/getUser.decorator';
+import { PayloadType } from '../auth/types';
 
 @Controller('cvs')
 export class CvsController {

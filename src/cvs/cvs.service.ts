@@ -19,8 +19,8 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
-import { User } from 'src/users/entities/user.entity';
-import { PayloadType } from 'src/auth/types';
+import { User } from '../users/entities/user.entity';
+import { PayloadType } from '../auth/types';
 
 @Injectable()
 export class CvsService {
