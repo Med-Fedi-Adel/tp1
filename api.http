@@ -4,11 +4,13 @@ GET http://localhost:3000/
 
 
 ### GET CV
-GET http://localhost:3000/cvs?critere=mohamed&age=21
+
+GET http://localhost:3000/cvs?age=21&critere=beney
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vaGFtZWRAZ21haWwuY29tIiwidXNlcklkIjo0LCJ1c2VybmFtZSI6ImNoYWltYWdoYXJiaSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzEzMDA5MTk0LCJleHAiOjE3MTMwOTU1OTR9.kfbELeqyJwTouMjJ__EACjit2Zxwx38qkmUa2vuha1Y
 
 ### UPDATE CV BY ID 
 PUT http://localhost:3000/cvs/1
-auth-user : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1c2VySWQiOjF9.UjgDHYQpEdM6Oyka05NZHUi9kqlzHTb7VhagLNaGL5o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vaGFtZWRAZ21haWwuY29tIiwidXNlcklkIjo0LCJ1c2VybmFtZSI6ImNoYWltYWdoYXJiaSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzEzMDA5MTk0LCJleHAiOjE3MTMwOTU1OTR9.kfbELeqyJwTouMjJ__EACjit2Zxwx38qkmUa2vuha1Y
 
 ### POST USER 
 POST http://localhost:3000/users
@@ -31,15 +33,16 @@ Content-Type: application/json
 
 ### POST CV
 POST http://localhost:3000/cvs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwidXNlcklkIjo3LCJ1c2VybmFtZSI6ImN2Y3YiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MTMwMzExOTgsImV4cCI6MTcxMzExNzU5OH0.oFgZLru514FXMbrYMI118oOTy-_2dGbCLya8-Vi1JYA
 Content-Type: application/json
 
 {
-    "name" : "fedi",
-    "firstname" : "fedi",
-    "age" : 21,
+    "name" : "hamrouni",
+    "firstname" : "lamia",
+    "age" : 56,
     "cin": 123456,
-    "job" : "dev",
-    "path" : "C:/Users/fedi/Desktop"
+    "job" : "tbiba",
+    "path" : "C:/Users/lamia/Desktop"
 
 }
 
@@ -48,7 +51,7 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {   
-    "email" : "mohamed@gmail.com" , 
+    "email" : "test@gmail.com" , 
     "password" : "123456"
 }
 
@@ -57,7 +60,7 @@ POST http://localhost:3000/auth/signup
 Content-Type: application/json
 
 {   
-    "username" : "Mohamed" , 
-    "email" : "mohamed@gmail.com",
+    "username" : "cvcv" , 
+    "email" : "test@gmail.com",
     "password" : "123456"
 }
