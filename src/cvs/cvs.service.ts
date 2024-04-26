@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -9,6 +10,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { Cv } from './entities/cv.entity';
 import { ExDTO } from './dto/ex.dto';
+
+import { createWriteStream, existsSync, mkdirSync } from 'fs';
+import { join } from 'path';
+
 import {
   IPaginationOptions,
   Pagination,
@@ -103,5 +108,46 @@ export class CvsService {
   }
   async delete(id: number) {
     return this.cvRepo.delete(id);
+  }
+  
+  async uploadFile(file: Express.Multer.File): Promise<{ filename: string; path: string }> {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+
+    if (!file.originalname) {
+      throw new BadRequestException('Invalid file object');
+    }
+
+    if (file.size > 1 * 1024 * 1024) {
+      throw new BadRequestException('File size should not exceed 1MB');
+    }
+
+    const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedMimes.includes(file.mimetype)) {
+      throw new BadRequestException('Invalid file type. Only JPEG, JPG, and PNG image files are allowed.');
+    }
+
+    const uploadDirectory = join(__dirname, '..', '..', 'public', 'uploads');
+    const uploadPath = join(uploadDirectory, file.originalname);
+
+    if (!existsSync(uploadDirectory)) {
+      mkdirSync(uploadDirectory, { recursive: true });
+    }
+
+    const writeStream = createWriteStream(uploadPath);
+
+    writeStream.write(file.buffer);
+
+    writeStream.on('finish', () => {
+      console.log('File saved successfully:', uploadPath);
+    });
+
+    writeStream.end();
+
+    return {
+      filename: file.filename,
+      path: uploadPath,
+    };
   }
 }

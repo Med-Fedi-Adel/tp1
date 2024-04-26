@@ -11,6 +11,7 @@ import {
   Put,
   Headers,
   UnauthorizedException,
+  BadRequestException,
   DefaultValuePipe,
   UseGuards,
 } from '@nestjs/common';
@@ -23,6 +24,11 @@ import { verify } from 'jsonwebtoken';
 import { Cv } from './entities/cv.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { JwtAuthGuard } from 'src/auth/jwt-guard';
+
+import { UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { createWriteStream, existsSync, mkdirSync } from 'fs';
+import * as path from 'path';
 
 @Controller('cvs')
 export class CvsController {
@@ -73,5 +79,10 @@ export class CvsController {
   @Delete(':id')
   async Delete(@Param('id', ParseIntPipe) id) {
     return await this.service.delete(id);
+  }
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadFile(@UploadedFile() file) {
+    return await this.service.uploadFile(file);
   }
 }
