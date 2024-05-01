@@ -14,6 +14,8 @@ import {
   BadRequestException,
   DefaultValuePipe,
   UseGuards,
+  ParseFilePipeBuilder,
+  HttpStatus,
 } from '@nestjs/common';
 import { CvsService } from './cvs.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -83,9 +85,20 @@ export class CvsController {
     return await this.service.delete(id);
   }
 
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('image'))
-  async uploadFile(@UploadedFile() file) {
-    return await this.service.uploadFile(file);
-  }
+  // @Post(':id')
+  // @UseGuards(JwtAuthGuard)
+  // @UseInterceptors(FileInterceptor('file'))
+  // async uploadFile(
+  //   @UploadedFile(
+  //     new ParseFilePipeBuilder()
+  //       .addFileTypeValidator({ fileType: /image\/(jpeg|png|jpg)/ })
+  //       .addMaxSizeValidator({ maxSize: 1024 * 1024 })
+  //       .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+  //   )
+  //   file,
+  //   @Param('id', ParseIntPipe) id: number,
+  // ) {
+  //   console.log('id', id);
+  //   return await this.service.uploadFile(id, file);
+  // }
 }

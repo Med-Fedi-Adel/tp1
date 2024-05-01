@@ -7,8 +7,7 @@ GET http://localhost:3000/
 
 ### GET CV
 GET http://localhost:3000/cvs?age=21&critere=beney
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlZGlAZ21haWwuY29tIiwidXNlcklkIjo0LCJ1c2VybmFtZSI6ImZlZGkiLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNDE2NjgzNywiZXhwIjoxNzE0MjUzMjM3fQ.2ZzMW2Fb7Jq1v03wfU-Y0lgdJHPkMpCvVn9nPh9LILQ
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlZGlAZ21haWwuY29tIiwidXNlcklkIjoxMCwidXNlcm5hbWUiOiJmZWRpIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MTQyMTQ4NjksImV4cCI6MTcxNDMwMTI2OX0.tuuzFF5SQDvoHuWLEUvAHTwgh1WD2BNl_PNcRJKOrqQ
 
 
 ### UPDATE CV BY ID 
@@ -21,11 +20,28 @@ Content-Type: application/json
 }
 
 ### GET CV BY ID
-GET http://localhost:3000/cvs/1
-
+GET http://localhost:3000/cvs/11
+Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlZGlAZ21haWwuY29tIiwidXNlcklkIjoxMCwidXNlcm5hbWUiOiJmZWRpIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MTQyMTQ4NjksImV4cCI6MTcxNDMwMTI2OX0.tuuzFF5SQDvoHuWLEUvAHTwgh1WD2BNl_PNcRJKOrqQ
 
 ### DELETE CV BY ID
 DELETE http://localhost:3000/cvs/1
+
+### CV UPLOAD 
+POST http://localhost:3000/cvs/11
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlZGlAZ21haWwuY29tIiwidXNlcklkIjoxMCwidXNlcm5hbWUiOiJmZWRpIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MTQxNzI4ODksImV4cCI6MTcxNDI1OTI4OX0.H1sZXrrfbQAIDKPGQt5SZUadPLW0YrWiDzZd9OxuPgI
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="1.png"
+Content-Type: image/png
+
+< ./1.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+
+
+
+
 
 
 
@@ -59,7 +75,7 @@ Content-Type: application/json
 
 ### POST CV
 POST http://localhost:3000/cvs
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlZGlAZ21haWwuY29tIiwidXNlcklkIjo0LCJ1c2VybmFtZSI6ImZlZGkiLCJyb2xlIjoidXNlciIsImlhdCI6MTcxNDE2NjgzNywiZXhwIjoxNzE0MjUzMjM3fQ.2ZzMW2Fb7Jq1v03wfU-Y0lgdJHPkMpCvVn9nPh9LILQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlZGlAZ21haWwuY29tIiwidXNlcklkIjoxMCwidXNlcm5hbWUiOiJmZWRpIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MTQyMTQ4NjksImV4cCI6MTcxNDMwMTI2OX0.tuuzFF5SQDvoHuWLEUvAHTwgh1WD2BNl_PNcRJKOrqQ
 Content-Type: application/json
 
 {
@@ -67,10 +83,12 @@ Content-Type: application/json
     "firstname" : "fedi",
     "age" : 21,
     "cin": 123456,
-    "job" : "testeur",
-    "path" : "path test"
+    "job" : "swe",
+    "path" : ""
 
 }
+
+##11
 
 ### AUTH #######################################################################""
 

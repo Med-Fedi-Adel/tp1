@@ -14,18 +14,23 @@ import {
   DefaultValuePipe,
   UseGuards,
   Request,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipeBuilder,
+  HttpStatus,
 } from '@nestjs/common';
 import { CvsService } from './cvs.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { ExDTO } from './dto/ex.dto';
 
-import { verify } from 'jsonwebtoken';
 import { Cv } from './entities/cv.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { JwtAuthGuard } from '../auth/jwt-guard';
 import { GetUser } from '../auth/getUser.decorator';
 import { PayloadType } from '../auth/types';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CvOwnerGuard } from '../auth/cv-owner-guard';
 
 @Controller('cvs')
 export class CvsController {
@@ -60,11 +65,12 @@ export class CvsController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   async cvById(@Param('id', ParseIntPipe) id) {
     return await this.service.findCvById(id);
   }
   // eslint-disable-next-line prettier/prettier
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CvOwnerGuard)
   @Put(':id')
   async updateCv(
     @Param('id', ParseIntPipe) id,
@@ -78,9 +84,28 @@ export class CvsController {
       throw new UnauthorizedException('You cannot access this route');
     }
   }
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CvOwnerGuard)
   @Delete(':id')
   async Delete(@Param('id', ParseIntPipe) id) {
     return await this.service.delete(id);
   }
+
+  @Post(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: /image\/(jpeg|png|jpg)/ })
+        .addMaxSizeValidator({ maxSize: 1024 * 1024 })
+        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+    )
+    file,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    console.log('id', id);
+    return await this.service.uploadFile(id, file);
+  }
+
+  //TODO get photo
 }

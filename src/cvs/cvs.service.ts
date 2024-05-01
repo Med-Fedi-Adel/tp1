@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -21,6 +22,8 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { User } from '../users/entities/user.entity';
 import { PayloadType } from '../auth/types';
+
+import * as fs from 'fs-extra';
 
 @Injectable()
 export class CvsService {
@@ -117,48 +120,23 @@ export class CvsService {
     return this.cvRepo.delete(id);
   }
 
-  async uploadFile(
-    file: Express.Multer.File,
-  ): Promise<{ filename: string; path: string }> {
-    if (!file) {
-      throw new BadRequestException('No file uploaded');
+  async uploadFile(id: number, file) {
+    const foundCv = await this.findCvById(id);
+
+    if (!foundCv) throw new NotFoundException('Cv not found');
+
+    const fileName = Date.now() + file.originalname;
+    const filePath = join(process.cwd(), 'public/uploads', fileName);
+
+    try {
+      await fs.writeFile(filePath, file.buffer);
+      foundCv.path = `/public/uploads/${fileName}`;
+
+      await this.cvRepo.save(foundCv);
+      return foundCv;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException();
     }
-
-    if (!file.originalname) {
-      throw new BadRequestException('Invalid file object');
-    }
-
-    if (file.size > 1 * 1024 * 1024) {
-      throw new BadRequestException('File size should not exceed 1MB');
-    }
-
-    const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png'];
-    if (!allowedMimes.includes(file.mimetype)) {
-      throw new BadRequestException(
-        'Invalid file type. Only JPEG, JPG, and PNG image files are allowed.',
-      );
-    }
-
-    const uploadDirectory = join(__dirname, '..', '..', 'public', 'uploads');
-    const uploadPath = join(uploadDirectory, file.originalname);
-
-    if (!existsSync(uploadDirectory)) {
-      mkdirSync(uploadDirectory, { recursive: true });
-    }
-
-    const writeStream = createWriteStream(uploadPath);
-
-    writeStream.write(file.buffer);
-
-    writeStream.on('finish', () => {
-      console.log('File saved successfully:', uploadPath);
-    });
-
-    writeStream.end();
-
-    return {
-      filename: file.filename,
-      path: uploadPath,
-    };
   }
 }
