@@ -24,6 +24,7 @@ import { User } from '../users/entities/user.entity';
 import { PayloadType } from '../auth/types';
 
 import * as fs from 'fs-extra';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class CvsService {
@@ -95,13 +96,11 @@ export class CvsService {
     return cv;
   }
 
-  async updateCv(
-    id: number,
-    cv: UpdateCvDto,
-    userId: number,
-  ): Promise<UpdateResult> {
+  async updateCv(id: number, cv: UpdateCvDto, userId: number): Promise<Cv> {
     //On récupère le cv d'id id et ensuite on replace les anciennes valeurs de ce cv par ceux du cv passé en paramètre
-    const newCv = await this.cvRepo.findOneBy({ id });
+    const newCv = await this.cvRepo.findOne({
+      where:{id:id}
+    });
     // tester le cas ou le cv d'id id n'existe pas
     if (!newCv) {
       throw new NotFoundException(`Le Cv d'id ${id} n'existe pas`);
@@ -113,11 +112,14 @@ export class CvsService {
       );
     }
     // on sauvgarde la nouvelle entité donc le nouveau cv
-    return await this.cvRepo.update(id, cv);
+    await this.cvRepo.update(id, cv);
+    return newCv;
   }
 
   async delete(id: number) {
-    return this.cvRepo.delete(id);
+    const cv = await this.cvRepo.findOneById(id);
+    this.cvRepo.delete(id);
+    return cv;
   }
 
   async uploadFile(id: number, file) {
@@ -139,4 +141,37 @@ export class CvsService {
       throw new InternalServerErrorException();
     }
   }
+
+  async getLogs(user: PayloadType) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    if (user.role === 'admin') {
+      // Fetch all logs
+      
+      const res = await fetch('https://localhost:9200/cvs/_search?q=*', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Basic ZWxhc3RpYzppUS1yb1dhUG1zN1NqdFBxRXR5dA==',
+        },
+      })
+      const data = await res.json();
+      console.log(data.hits.hits);
+      return data.hits.hits;
+      
+    } else {
+      // Fetch logs for a specific user
+      const res = await fetch(`https://localhost:9200/cvs/_search?q=userId:${user.userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Basic ZWxhc3RpYzppUS1yb1dhUG1zN1NqdFBxRXR5dA==',
+        },
+      })
+      const data = await res.json();
+      console.log(data.hits.hits);
+      return data.hits.hits;
+    }
+
+  }
+  
 }

@@ -9,6 +9,8 @@ import { User } from './users/entities/user.entity';
 import { Cv } from './cvs/entities/cv.entity';
 import { Skill } from './skills/entities/skill.entity';
 import { AuthModule } from './auth/auth.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ListenerModule } from './listener/listener.module';
 
 @Module({
   imports: [
@@ -21,11 +23,14 @@ import { AuthModule } from './auth/auth.module';
       database: 'tp1',
       entities: ['dist/**/*.entity{.ts,.js}', User, Cv, Skill],
       synchronize: true,
+      
     }),
     CvsModule,
     SkillsModule,
     UsersModule,
     AuthModule,
+    EventEmitterModule.forRoot(),
+    ListenerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

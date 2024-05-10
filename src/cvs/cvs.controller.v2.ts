@@ -18,6 +18,8 @@ import {
   UploadedFile,
   ParseFilePipeBuilder,
   HttpStatus,
+  Sse,
+  MessageEvent,
 } from '@nestjs/common';
 import { CvsService } from './cvs.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -31,14 +33,48 @@ import { GetUser } from '../auth/getUser.decorator';
 import { PayloadType } from '../auth/types';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CvOwnerGuard } from '../auth/cv-owner-guard';
+import { Observable, fromEvent, map, merge } from 'rxjs';
+import { EVENTS } from 'src/listener/Events/cv.events';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller('cvs')
 export class CvsController {
-  constructor(private service: CvsService) {}
+  constructor(private service: CvsService,private eventEmitter: EventEmitter2) {}
   // @Get()
   // async addCvAvecDonnéesFictives() {
   // return await this.service.GenererDonnéesFictives();
   // }
+  @UseGuards(JwtAuthGuard)
+  @Sse('sse')
+  sse(@GetUser() user: PayloadType): Observable<MessageEvent> {
+
+    const cvAdd$ = fromEvent(this.eventEmitter, EVENTS.CV_ADD);
+  const cvDelete$ = fromEvent(this.eventEmitter, EVENTS.CV_DELETE);
+  const cvUpdate$ = fromEvent(this.eventEmitter, EVENTS.CV_UPDATE);
+    
+  return merge(cvAdd$, cvDelete$, cvUpdate$).pipe(
+      map((payload) => {
+        if (user.role === 'admin'){
+          return ({ data : {payload} });
+        }
+        else if (user.role === 'user'){
+          if (payload['userId'] === user.userId){
+            return ({ data : {payload} });
+          }
+        }
+        
+        
+      }),
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('logs')
+  getLogs(@GetUser() user: PayloadType){
+    return this.service.getLogs(user);
+  }
+
+
   @UseGuards(JwtAuthGuard)
   @Get()
   async getALLCvs(
@@ -61,6 +97,7 @@ export class CvsController {
   @Post()
   async addCv(@Body() addcv: CreateCvDto, @GetUser() user: PayloadType) {
     console.log('user', user);
+    this.eventEmitter.emit(EVENTS.CV_ADD, {date: new Date(), userId: user.userId,cv:addcv});
     return await this.service.addCv(addcv, user.userId);
   }
 
@@ -78,7 +115,9 @@ export class CvsController {
     @GetUser() user: PayloadType,
   ) {
     try {
-      return await this.service.updateCv(id, updatecv, user.userId);
+      const cv= await this.service.updateCv(id, updatecv, user.userId);
+      this.eventEmitter.emit(EVENTS.CV_UPDATE, {date: new Date(), userId: user.userId,cv:cv});
+      return cv;
     } catch (err) {
       console.error(err);
       throw new UnauthorizedException('You cannot access this route');
@@ -86,8 +125,10 @@ export class CvsController {
   }
   @UseGuards(JwtAuthGuard, CvOwnerGuard)
   @Delete(':id')
-  async Delete(@Param('id', ParseIntPipe) id) {
-    return await this.service.delete(id);
+  async Delete(@Param('id', ParseIntPipe) id,@GetUser() user: PayloadType){
+    const cv = await this.service.delete(id);
+    this.eventEmitter.emit(EVENTS.CV_DELETE, {date: new Date(), userId: user.userId,cv:cv});
+    return cv;
   }
 
   @Post(':id')
@@ -107,5 +148,10 @@ export class CvsController {
     return await this.service.uploadFile(id, file);
   }
 
-  //TODO get photo
+  
+
+  
+
+
+  
 }

@@ -16,6 +16,7 @@ import {
   UseGuards,
   ParseFilePipeBuilder,
   HttpStatus,
+  Sse,
 } from '@nestjs/common';
 import { CvsService } from './cvs.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -31,10 +32,13 @@ import { UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { createWriteStream, existsSync, mkdirSync } from 'fs';
 import * as path from 'path';
+import { Observable, fromEvent, map } from 'rxjs';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EVENTS } from 'src/listener/Events/cv.events';
 
 @Controller('cvs')
 export class CvsController {
-  constructor(private service: CvsService) {}
+  constructor(private service: CvsService,private eventEmitter: EventEmitter2) {}
   //@Get()
   //async addCvAvecDonnéesFictives() {
   //return await this.service.GenererDonnéesFictives();
@@ -101,4 +105,14 @@ export class CvsController {
   //   console.log('id', id);
   //   return await this.service.uploadFile(id, file);
   // }
+
+  @Sse('sse')
+  sse(): Observable<MessageEvent> {
+    return fromEvent(this.eventEmitter, EVENTS.CV_ADD).pipe(
+      map((data) => {
+        console.log('data', data);
+        return new MessageEvent('new-order', { data: 'new order' });
+      }),
+    );
+  }
 }
